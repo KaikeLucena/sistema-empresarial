@@ -1,0 +1,47 @@
+<?php
+/**
+ * Plugin Name: Meu Plugin
+ * Description: Plugin para adicionar um formulário de login personalizado
+ */
+
+// Cria o shortcode para exibir o formulário de login
+function meu_plugin_login_form_shortcode() {
+    ob_start();
+    
+    // Verifica se o formulário foi enviado
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+        
+        // Conexão com o banco de dados (use as informações do seu banco)
+        $servername = "*****";
+        $db_username = "*******";
+        $db_password = "*******";
+        $dbname = "********";
+        
+        $conn = new mysqli($servername, $db_username, $db_password, $dbname);
+        
+        // Verifica se houve um erro na conexão
+        if ($conn->connect_error) {
+            die("Falha na conexão com o banco de dados: " . $conn->connect_error);
+        }
+        
+        
+        
+        // Consulta no banco de dados
+        $sql = "SELECT * FROM usuarios WHERE username = '$username' AND password = '$password'";
+        $result = $conn->query($sql);
+        
+        if ($result->num_rows > 0) {
+            // Usuário autenticado com sucesso
+            // Redireciona para a URL desejada após o login
+            wp_redirect('https://ritmoadm.com.br/home/');
+            exit();
+        } else {
+            // Usuário ou senha inválidos
+            // Redireciona para a página de erro ou realiza outras ações necessárias
+            wp_redirect('https://ritmoadm.com.br/login/');
+            exit();
+        }
+        
+        $conn->close();
